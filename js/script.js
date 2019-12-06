@@ -16,9 +16,14 @@ $('#title').on('change', e => {
 
 console.log($('#design'));
 
-$('#design').on('change', e => {
-  const $selColor = $('#color');
+const $selColor = $('#color');
+$selColor.attr('disabled', 'disabled');
+$selColor.children().each(function() {
+  $(this).attr('disabled', 'disabled');
+});
 
+$('#design').on('change', e => {
+  $selColor.removeAttr('disabled');
   switch ($('#design').val()) {
     case 'js puns':
       //todo filter the colors by js puns
@@ -40,10 +45,7 @@ $('#design').on('change', e => {
       break;
     default:
       //todo disable and clean color selector
-      $selColor.children().each(function() {
-        $(this).show();
-        $(this).attr('disabled', 'disabled');
-      });
+      $selColor.attr('disabled', 'disabled');
   }
   $selColor.prop('selectedIndex', 0);
 });
