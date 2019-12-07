@@ -50,22 +50,15 @@ $('#design').on('change', e => {
   $selColor.prop('selectedIndex', 0);
 });
 
-//todo handler of checkboxes inside activities fieldset
+// Handler of checkboxes inside activities fieldset
 const $fieldsetActivities = $('.activities');
 
 $fieldsetActivities.on('change', function(e) {
-  console.log(this);
-  console.log(e.target);
   // if was checked
-  if (e.target.checked) {
-    //todo disable other checkboxes that conflicts the time
-    refreshOtherActivities($(e.target));
-    //todo add the value from the total sum
-  } else {
-    // is was unchecked
-    //todo re-enable other checkboxes that conflicts the time
-    //todo subtract the value from the total sum
-  }
+  // Disable (OR Enable) other checkboxes that conflicts the time
+  refreshOtherActivities($(e.target));
+  //TODO Add or subtract the value from the total sum
+  sumValues();
 });
 
 /**
@@ -77,7 +70,7 @@ $fieldsetActivities.on('change', function(e) {
  */
 function refreshOtherActivities($checkboxInput) {
   const checkedActivityCheckbox = parseActivity($checkboxInput);
-  $('.activities input:not(:checked)').each(function() {
+  $('.activities :checkbox:not(:checked)').each(function() {
     const otherNonCheckedActivityCheckbox = parseActivity($(this));
     // if the day is the same
     if (otherNonCheckedActivityCheckbox.day === checkedActivityCheckbox.day) {
@@ -88,7 +81,7 @@ function refreshOtherActivities($checkboxInput) {
         otherNonCheckedActivityCheckbox.timeStart <
           checkedActivityCheckbox.timeEnd
       ) {
-        if ($checkboxInput.val()) {
+        if ($checkboxInput.prop('checked')) {
           // disable the checkable activity
           $(this).attr('disabled', 'disabled');
         } else {
@@ -133,4 +126,13 @@ function ampmTo24h(hour, ampm) {
   return ampm === 'am' || (ampm === 'pm' && hour === '12')
     ? parseInt(hour)
     : parseInt(hour) + 12;
+}
+
+function sumValues() {
+  let total = 0;
+  $('.activities input:checkbox:checked').each(function() {
+    const cost = parseActivity($(this)).cost;
+    total += cost;
+  });
+  $('.activities .js-total-value strong').text(total);
 }
