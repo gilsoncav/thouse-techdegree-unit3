@@ -171,3 +171,32 @@ $('#payment').on('change', e => {
       break;
   }
 });
+
+// Form validations
+
+//TODO dynamically register listeners to all INPUTS that are TEXT
+
+$('input[type="text"], input[type="email"').each(function() {
+  const regexpValidationString = $(this).attr('regexp');
+  // if the INPUT TEXT field has a regexp to validate it's value
+  if (regexpValidationString) {
+    this.addEventListener('keyup', e => {
+      let errorMsg = 'noerror';
+      if ($(this).val() === '') {
+        errorMsg = $(this).attr('blankErrorMsg');
+      } else {
+        const regexp = new RegExp(regexpValidationString, 'i');
+        if (!regexp.test($(this).val())) {
+          errorMsg = $(this).attr('partialErrorMsg');
+        }
+      }
+      if (errorMsg === 'noerror') {
+        console.log('NO ERROR');
+        $(this).removeClass('error');
+      } else {
+        console.log(`ERROR: ${errorMsg}`);
+        $(this).addClass('error');
+      }
+    });
+  }
+});

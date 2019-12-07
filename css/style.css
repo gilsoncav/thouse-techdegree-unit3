@@ -110,6 +110,11 @@ input[type='radio'] {
   display: inline-block;
 }
 
+input[type='text'].error,
+input[type='email'].error {
+  border-bottom: 5px dashed rgb(226, 126, 181);
+}
+
 button {
   color: #fff;
   padding: 0.55em 1.25em;

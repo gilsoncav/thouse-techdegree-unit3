@@ -22,7 +22,14 @@
           <input type="text" id="name" name="user-name" />
 
           <label for="mail">Email:</label>
-          <input type="email" id="mail" name="user-email" />
+          <input
+            type="email"
+            id="mail"
+            name="user-email"
+            blankErrorMsg="Type you email here!"
+            partialErrorMsg="Aren't you forgetting a @ or a .?"
+            regexp="^[^@]+@[^@.]+\.[a-z]+$"
+          />
 
           <label for="title">Job Role</label>
           <select id="title" name="user-title">
