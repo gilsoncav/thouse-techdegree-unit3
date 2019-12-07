@@ -177,32 +177,36 @@ $('#payment').on('change', e => {
 //TODO dynamically register listeners to all INPUTS that are TEXT
 
 $('input[type="text"], input[type="email"').each(function() {
-  const regexpValidationString = $(this).attr('regexp');
+  validateField($(this));
+});
+
+function validateField($input) {
+  const regexpValidationString = $input.attr('regexp');
   // if the INPUT TEXT field has a regexp to validate it's value
   if (regexpValidationString) {
-    this.addEventListener('keyup', e => {
+    $input.on('keyup', e => {
       let errorMsg = 'noerror';
 
       // Check if there is an error (being empty) or if there is a
       // partial input that is not satisfying the regexp
-      if ($(this).val() === '') {
-        errorMsg = $(this).attr('blankErrorMsg');
+      if ($input.val() === '') {
+        errorMsg = $input.attr('blankErrorMsg');
       } else {
         const regexp = new RegExp(regexpValidationString, 'i');
-        if (!regexp.test($(this).val())) {
-          errorMsg = $(this).attr('partialErrorMsg');
+        if (!regexp.test($input.val())) {
+          errorMsg = $input.attr('partialErrorMsg');
         }
       }
 
       // removes any previous shown error alerts for this input
-      removeErrorAlert($(this));
+      removeErrorAlert($input);
       // If there is an error to show, appends a new error alert
       if (errorMsg !== 'noerror') {
-        appendErrorAlert($(this), errorMsg);
+        appendErrorAlert($input, errorMsg);
       }
     });
   }
-});
+}
 
 function removeErrorAlert($input) {
   if ($input.next('.js-error-alert').length > 0) {
@@ -216,5 +220,3 @@ function appendErrorAlert($input, errorMsg) {
   // if there is no error alert div already
   $input.after($(`<div class="js-error-alert">${errorMsg}</div>`));
 }
-
-//TODO Show or hide the error message to the input
