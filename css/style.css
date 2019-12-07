@@ -80,6 +80,10 @@ label {
   margin-bottom: 0.5em;
 }
 
+.conflicted {
+  color: rgb(94, 94, 94);
+}
+
 input,
 select {
   margin-bottom: 1.125em;

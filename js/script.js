@@ -84,8 +84,14 @@ function refreshOtherActivities($checkboxInput) {
         if ($checkboxInput.prop('checked')) {
           // disable the checkable activity
           $(this).attr('disabled', 'disabled');
+          $(this)
+            .parent()
+            .addClass('conflicted');
         } else {
           $(this).removeAttr('disabled');
+          $(this)
+            .parent()
+            .removeClass('conflicted');
         }
       }
     }
@@ -128,6 +134,9 @@ function ampmTo24h(hour, ampm) {
     : parseInt(hour) + 12;
 }
 
+/**
+ * Shows the sum of all selected Activities cost in the dedicated paragraph
+ */
 function sumValues() {
   let total = 0;
   $('.activities input:checkbox:checked').each(function() {
