@@ -145,3 +145,29 @@ function sumValues() {
   });
   $('.activities .js-total-value strong').text(total);
 }
+
+// Hide all payments sections
+$('#paypal').hide();
+$('#bitcoin').hide();
+$('#payment option[value^="select"]').attr('disabled', 'disabled');
+// Setting the default payment option
+$('#payment option[value="credit card"]').attr('selected', true);
+$('#payment').on('change', e => {
+  switch ($('#payment').val()) {
+    case 'credit card':
+      $('#credit-card').show();
+      $('#paypal').hide();
+      $('#bitcoin').hide();
+      break;
+    case 'paypal':
+      $('#credit-card').hide();
+      $('#paypal').show();
+      $('#bitcoin').hide();
+      break;
+    case 'bitcoin':
+      $('#credit-card').hide();
+      $('#paypal').hide();
+      $('#bitcoin').show();
+      break;
+  }
+});
