@@ -174,37 +174,63 @@ $('#payment').on('change', e => {
 
 // Form validations
 
-//TODO dynamically register listeners to all INPUTS that are TEXT
+function addValidationListenerAllFields() {
+  $('input[type="text"], input[type="email"').each(function() {
+    addValidationListener($(this));
+    // disable autocompletion for these fields
+    $(this).attr('autocomplete', 'off');
+  });
+}
 
-$('input[type="text"], input[type="email"').each(function() {
-  validateField($(this));
-});
-
-function validateField($input) {
-  const regexpValidationString = $input.attr('regexp');
+function addValidationListener($input) {
   // if the INPUT TEXT field has a regexp to validate it's value
-  if (regexpValidationString) {
+  if ($input.attr('regexp')) {
     $input.on('keyup', e => {
-      let errorMsg = 'noerror';
-
-      // Check if there is an error (being empty) or if there is a
-      // partial input that is not satisfying the regexp
-      if ($input.val() === '') {
-        errorMsg = $input.attr('blankErrorMsg');
-      } else {
-        const regexp = new RegExp(regexpValidationString, 'i');
-        if (!regexp.test($input.val())) {
-          errorMsg = $input.attr('partialErrorMsg');
-        }
-      }
-
-      // removes any previous shown error alerts for this input
-      removeErrorAlert($input);
-      // If there is an error to show, appends a new error alert
-      if (errorMsg !== 'noerror') {
-        appendErrorAlert($input, errorMsg);
-      }
+      validateFieldShowOrHideError($input);
     });
+  }
+}
+
+/**
+ * Validates a field value.
+ * If you want a field to be checked you must define the following attributes
+ * in the HTML INPUT field (text or email):
+ * It visually adds a visual alert with the proper error message to the user.
+ *
+ * `regexp` The regular expression to test the input value against. If you want
+ * the field not to be checked, simply don't define this attribute.
+ * `blankErrorMsg` The string message that you want to be shown if the field
+ * was left empty. If you want to allow the field to be empty in form submission
+ * simply don't define this attribute
+ * `partialErrorMsg` The error message if the typed value of the INPUT does not
+ * satisfy the regexp pattern.
+ *
+ * @param {jQuery INPUT} $input The INPUT field to be checked
+ * @returns true If the field was validated with no errors
+ */
+function validateFieldShowOrHideError($input) {
+  if ($input.attr('regexp')) {
+    let errorMsg = 'noerror';
+
+    // Check if there is an error (being empty) or if there is a
+    // partial input that is not satisfying the regexp
+    if ($input.val() === '') {
+      errorMsg = $input.attr('blankErrorMsg');
+    } else {
+      const regexp = new RegExp($input.attr('regexp'), 'i');
+      if (!regexp.test($input.val())) {
+        errorMsg = $input.attr('partialErrorMsg');
+      }
+    }
+
+    // removes any previous shown error alerts for this input
+    removeErrorAlert($input);
+    // If there is an error to show, appends a new error alert
+    if (errorMsg !== 'noerror') {
+      appendErrorAlert($input, errorMsg);
+    }
+    // returns true if there was no error
+    return errorMsg === 'noerror';
   }
 }
 
@@ -220,3 +246,26 @@ function appendErrorAlert($input, errorMsg) {
   // if there is no error alert div already
   $input.after($(`<div class="js-error-alert">${errorMsg}</div>`));
 }
+
+// At first load of the script attach listeners to all INPUTS that
+// has validation attributes (see `validateFieldShowOrHideError(...)`))
+addValidationListenerAllFields();
+
+$('form').on('submit', e => {
+  // Browse all INPUT elements that are visible and need to be validated before
+  // submission
+  let $firstElementWithError;
+
+  $('input[type="text"]:visible, input[type="email"]:visible').each(function(
+    i
+  ) {
+    const ok = validateFieldShowOrHideError($(this));
+    // Stores the first element that had a validation error to focus on it
+    if (!ok && $firstElementWithError === undefined) {
+      $firstElementWithError = $(this);
+    }
+  });
+  if ($firstElementWithError !== undefined) $firstElementWithError.focus();
+  e.preventDefault();
+  console.log('COMMENT: submission prevented in code!');
+});
