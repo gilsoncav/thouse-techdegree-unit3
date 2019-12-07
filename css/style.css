@@ -114,6 +114,24 @@ input[type='text'].error,
 input[type='email'].error {
   border-bottom: 5px dashed rgb(226, 126, 181);
 }
+.js-error-alert {
+  color: white;
+  background-color: rgb(226, 126, 181);
+  margin-left: 30px;
+  width: fit-content;
+  border-radius: 0 10px 10px 10px;
+  -webkit-border-radius: 0 10px 10px 10px;
+  -moz-border-radius: 0 10px 10px 10px;
+  -ms-border-radius: 0 10px 10px 10px;
+  -o-border-radius: 0 10px 10px 10px;
+  padding: 10px 20px;
+  transition: 400ms;
+  -webkit-transition: 400ms;
+  -moz-transition: 400ms;
+  -ms-transition: 400ms;
+  -o-transition: 400ms;
+  left: 0;
+}
 
 button {
   color: #fff;

@@ -182,6 +182,9 @@ $('input[type="text"], input[type="email"').each(function() {
   if (regexpValidationString) {
     this.addEventListener('keyup', e => {
       let errorMsg = 'noerror';
+
+      // Check if there is an error (being empty) or if there is a
+      // partial input that is not satisfying the regexp
       if ($(this).val() === '') {
         errorMsg = $(this).attr('blankErrorMsg');
       } else {
@@ -190,13 +193,28 @@ $('input[type="text"], input[type="email"').each(function() {
           errorMsg = $(this).attr('partialErrorMsg');
         }
       }
-      if (errorMsg === 'noerror') {
-        console.log('NO ERROR');
-        $(this).removeClass('error');
-      } else {
-        console.log(`ERROR: ${errorMsg}`);
-        $(this).addClass('error');
+
+      // removes any previous shown error alerts for this input
+      removeErrorAlert($(this));
+      // If there is an error to show, appends a new error alert
+      if (errorMsg !== 'noerror') {
+        appendErrorAlert($(this), errorMsg);
       }
     });
   }
 });
+
+function removeErrorAlert($input) {
+  if ($input.next('.js-error-alert').length > 0) {
+    $input.next('.js-error-alert').remove();
+  }
+  $input.removeClass('error');
+}
+
+function appendErrorAlert($input, errorMsg) {
+  $input.addClass('error');
+  // if there is no error alert div already
+  $input.after($(`<div class="js-error-alert">${errorMsg}</div>`));
+}
+
+//TODO Show or hide the error message to the input
