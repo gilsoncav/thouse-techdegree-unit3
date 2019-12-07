@@ -59,6 +59,7 @@ $fieldsetActivities.on('change', function(e) {
   // if was checked
   if (e.target.checked) {
     //todo disable other checkboxes that conflicts the time
+    refreshOtherActivities($(e.target));
     //todo add the value from the total sum
   } else {
     // is was unchecked
@@ -74,27 +75,62 @@ $fieldsetActivities.on('change', function(e) {
  * @param {*} label
  * @param {bool} status The new status true to enable, false to disable
  */
-function changeActivityStatus(checkboxInput) {
-  $('.activities input:not(checked)').each(function() {
-    const strDayAndTime = $(this).data('day-and-time');
-    if (strDayAndTime !== undefined) {
-      const dayTimeArray = strDayAndTime.match(
-        /^(\w+) (\d+)(am|pm)-(\d+)(am|pm)$/
-      );
-      const day = dayTimeArray[1];
-      // getting start time in 24h pattern
-      const timeStart =
-        dayTimeArray[3] === 'am'
-          ? parseInt(dayTimeArray[2])
-          : parseInt(dayTimeArray[2]) + 12;
-      const timeEnd =
-        dayTimeArray[5] === 'am'
-          ? parseInt(dayTimeArray[4])
-          : parseInt(dayTimeArray[4]) + 12;
-      const cost = parseInt($(this).data('cost'));
-      console.log(day);
+function refreshOtherActivities($checkboxInput) {
+  const checkedActivityCheckbox = parseActivity($checkboxInput);
+  $('.activities input:not(:checked)').each(function() {
+    const otherNonCheckedActivityCheckbox = parseActivity($(this));
+    // if the day is the same
+    if (otherNonCheckedActivityCheckbox.day === checkedActivityCheckbox.day) {
+      // if timeStart is in between the start time and end time
+      if (
+        otherNonCheckedActivityCheckbox.timeStart >=
+          checkedActivityCheckbox.timeStart &&
+        otherNonCheckedActivityCheckbox.timeStart <
+          checkedActivityCheckbox.timeEnd
+      ) {
+        if ($checkboxInput.val()) {
+          // disable the checkable activity
+          $(this).attr('disabled', 'disabled');
+        } else {
+          $(this).removeAttr('disabled');
+        }
+      }
     }
   });
 }
 
-changeActivityStatus();
+function parseActivity($checkboxInput) {
+  const newActivityObj = {
+    $originalCheckbox: $checkboxInput
+  };
+  const strDayAndTime = $checkboxInput.data('day-and-time');
+  const cost = parseInt($checkboxInput.data('cost'));
+  const regexToParseDayTimeCost = /^(\w+) (\d+)(am|pm)-(\d+)(am|pm)$/;
+  newActivityObj.cost = cost;
+  if (strDayAndTime !== undefined) {
+    // extract captured info in an Array
+    const dayTimeArray = strDayAndTime.match(regexToParseDayTimeCost);
+    // extracting info from the array into specific variables
+    const day = dayTimeArray[1];
+    const timeStart = ampmTo24h(dayTimeArray[2], dayTimeArray[3]);
+    const timeEnd = ampmTo24h(dayTimeArray[4], dayTimeArray[5]);
+
+    newActivityObj.day = day;
+    newActivityObj.timeStart = timeStart;
+    newActivityObj.timeEnd = timeEnd;
+  }
+  return newActivityObj;
+}
+
+/**
+ * Helper function to convert the hour parsed in a AM PM format to a 24h standard
+ *
+ * @param {String} hour
+ * @param {String} ampm String with 'am' or 'pm'
+ * @returns {Number} The hour converted in 24h standard
+ */
+function ampmTo24h(hour, ampm) {
+  return ampm === 'am' || (ampm === 'pm' && hour === '12')
+    ? parseInt(hour)
+    : parseInt(hour) + 12;
+}
