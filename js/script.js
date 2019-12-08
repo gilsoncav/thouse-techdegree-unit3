@@ -57,7 +57,8 @@ $fieldsetActivities.on('change', function(e) {
   // if was checked
   // Disable (OR Enable) other checkboxes that conflicts the time
   refreshOtherActivities($(e.target));
-  //TODO Add or subtract the value from the total sum
+  validateActivitiesCheckboxesShowOrHideError(false);
+  // Add or subtract the value from the total sum
   sumValues();
 });
 
@@ -243,6 +244,19 @@ function validateFieldShowOrHideError($input) {
   }
 }
 
+function validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred) {
+  removeErrorAlert($('.activities legend'));
+  if ($('.activities input[type="checkbox"]:checked').length === 0) {
+    appendErrorAlert(
+      $('.activities legend'),
+      'Please select at least one activity!'
+    );
+    if (!validationErrorOccurred)
+      $('.activities input[type="checkbox"]:first').focus();
+    validationErrorOccurred = true;
+  }
+}
+
 function removeErrorAlert($input) {
   if ($input.next('.js-error-alert').length > 0) {
     $input.next('.js-error-alert').remove();
@@ -261,6 +275,11 @@ function appendErrorAlert($input, errorMsg) {
 addValidationListenerAllFields();
 
 $('form').on('submit', e => {
+  e.preventDefault();
+  console.log('COMMENT: submission prevented in code!');
+
+  let validationErrorOccurred = false;
+
   // Browse all INPUT elements that are visible and need to be validated before
   // submission
   let $firstElementWithError;
@@ -274,7 +293,19 @@ $('form').on('submit', e => {
       $firstElementWithError = $(this);
     }
   });
-  if ($firstElementWithError !== undefined) $firstElementWithError.focus();
-  e.preventDefault();
-  console.log('COMMENT: submission prevented in code!');
+
+  // if there was an error with inputs
+  if ($firstElementWithError !== undefined) {
+    $firstElementWithError.focus();
+    validationErrorOccurred = true;
+  }
+
+  // If there is no acitivity checkbox selected
+  validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred);
+
+  if (validationErrorOccurred) {
+    console.log('COMMENT: validation error occurred!');
+  } else {
+    alert('Everything ok to submit the form (Mockup Version Message)');
+  }
 });
