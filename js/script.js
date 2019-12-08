@@ -88,6 +88,7 @@ function refreshOtherActivities($checkboxInput) {
             .parent()
             .addClass('conflicted');
         } else {
+          // make sure to enable the activity
           $(this).removeAttr('disabled');
           $(this)
             .parent()
@@ -98,6 +99,14 @@ function refreshOtherActivities($checkboxInput) {
   });
 }
 
+/**
+ * Parse data from the activity element data attributes and builds an
+ * object representing the activity to return
+ *
+ * @param {*} $checkboxInput
+ * @returns {Object} An object that represents the activity with a day, timeStart,
+ * timeEnd and cost properties
+ */
 function parseActivity($checkboxInput) {
   const newActivityObj = {
     $originalCheckbox: $checkboxInput

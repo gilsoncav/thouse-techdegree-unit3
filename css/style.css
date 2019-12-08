@@ -16,8 +16,8 @@ button {
 
 body {
   font: 1em/1.5;
-  color: rgba(6, 49, 68, 0.9);
-  background: #cde0fb;
+  color: #33032f;
+  background: white;
 }
 
 header {
@@ -40,8 +40,8 @@ a {
 
 form {
   padding: 0.875em 1.875em 1.875em;
-  background: #9bbeef;
-  border: 2px solid rgba(8, 63, 87, 0.6);
+  background: white;
+  border: 2px solid rgba(208, 208, 208, 0.6);
   border-radius: 3px;
 }
 
@@ -80,8 +80,9 @@ label {
   margin-bottom: 0.5em;
 }
 
+/* Class to mark an activity that is conflicting times with another selected activity */
 .conflicted {
-  color: rgb(94, 94, 94);
+  color: rgb(189, 189, 189);
 }
 
 input,
@@ -93,15 +94,16 @@ input {
   font-size: 1em;
   font-weight: 500;
   padding: 0.8em;
-  background: #e9f6fb;
-  border: 2px solid rgb(111, 157, 220);
+  background: #fff;
+  border: 2px solid #33032f;
   border-radius: 3px;
   outline: none;
 }
 
 input:focus {
-  background: #fff;
-  border-color: #5e97b0;
+  background: #fefef1;
+
+  border: 2px solid #1fc293;
   transition: border-color 0.4s, background-color 0.4s;
 }
 
