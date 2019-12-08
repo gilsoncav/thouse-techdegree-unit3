@@ -16,14 +16,21 @@ $('#title').on('change', e => {
 
 console.log($('#design'));
 
+// Set initial state of the T-Shirt section
 const $selColor = $('#color');
+$('#colors-js-puns').hide();
 $selColor.attr('disabled', 'disabled');
 $selColor.children().each(function() {
   $(this).attr('disabled', 'disabled');
 });
 
+/**
+ * Listener to changes from the Design SELECT to filter, activate and
+ * deactivate the Color SELECT.
+ */
 $('#design').on('change', e => {
   $selColor.removeAttr('disabled');
+  $('#colors-js-puns').show();
   switch ($('#design').val()) {
     case 'js puns':
       //filter the colors by js puns
@@ -46,6 +53,7 @@ $('#design').on('change', e => {
     default:
       //disable and clean color selector
       $selColor.attr('disabled', 'disabled');
+      $('#colors-js-puns').hide();
   }
   $selColor.prop('selectedIndex', 0);
 });
@@ -156,12 +164,21 @@ function sumValues() {
   $('.activities .js-total-value strong').text(total);
 }
 
+/**
+ * Sets the initial state of the Payment section
+ */
+
 // Hide all payments sections
 $('#paypal').hide();
 $('#bitcoin').hide();
 $('#payment option[value^="select"]').attr('disabled', 'disabled');
 // Setting the default payment option
 $('#payment option[value="credit card"]').attr('selected', true);
+
+/**
+ * Sets listener for changes in the Payment type SELECT element to
+ * show or hide proper sections according to the selected type
+ */
 $('#payment').on('change', e => {
   switch ($('#payment').val()) {
     case 'credit card':
@@ -182,16 +199,25 @@ $('#payment').on('change', e => {
   }
 });
 
-// Form validations
-
+/**
+ * Adds dynamically listeners to all INPUT elements in the form of the types
+ * TEXT and EMAIL
+ */
 function addValidationListenerAllFields() {
-  $('input[type="text"], input[type="email"').each(function() {
+  $('input[type="text"], input[type="email"]').each(function() {
     addValidationListener($(this));
     // disable autocompletion for these fields
     $(this).attr('autocomplete', 'off');
   });
 }
 
+/**
+ * Helper function that just adds a validation listener for a field that
+ * has an HTML custom attribute named "regexp" that must contains a
+ * string with a Regular Expression to validate the field.
+ *
+ * @param {*} $input
+ */
 function addValidationListener($input) {
   // if the INPUT TEXT field has a regexp to validate it's value
   if ($input.attr('regexp')) {
@@ -267,23 +293,29 @@ function validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred) {
   }
 }
 
-function removeErrorAlert($input) {
-  if ($input.next('.js-error-alert').length > 0) {
-    $input.next('.js-error-alert').remove();
+/**
+ * Helper function to visually remove an error alert callout of
+ * an form element
+ *
+ * @param {*} $formElement
+ */
+function removeErrorAlert($formElement) {
+  if ($formElement.next('.js-error-alert').length > 0) {
+    $formElement.next('.js-error-alert').remove();
   }
-  $input.removeClass('error');
+  $formElement.removeClass('error');
 }
 
-function appendErrorAlert($input, errorMsg) {
-  $input.addClass('error');
+function appendErrorAlert($formElement, errorMsg) {
+  $formElement.addClass('error');
   // if there is no error alert div already
-  $input.after($(`<div class="js-error-alert">${errorMsg}</div>`));
+  $formElement.after($(`<div class="js-error-alert">${errorMsg}</div>`));
 }
 
-// At first load of the script attach listeners to all INPUTS that
-// has validation attributes (see `validateFieldShowOrHideError(...)`))
-addValidationListenerAllFields();
-
+/**
+ * Sets listener to the form submission to assert that validations be enforced
+ * before submission.
+ */
 $('form').on('submit', e => {
   e.preventDefault();
   console.log('COMMENT: submission prevented in code!');
@@ -315,9 +347,16 @@ $('form').on('submit', e => {
     !validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred) ||
     validationErrorOccurred;
 
+  // ? apparently this code is asynchronous line by line. I got weird results with the next if check being executed before the last line was executed and changed the boolean value.
   if (validationErrorOccurred) {
     console.log('COMMENT: validation error occurred!');
   } else {
     alert('Everything ok to submit the form (Mockup Version Message)');
   }
 });
+
+/**
+ * At first load of the script attach listeners to all INPUTS that
+ * has validation attributes (see `validateFieldShowOrHideError(...)`))
+ */
+addValidationListenerAllFields();
