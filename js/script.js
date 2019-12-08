@@ -244,6 +244,14 @@ function validateFieldShowOrHideError($input) {
   }
 }
 
+/**
+ * Validates if there is at least one checkbox checked.
+ * returns true if there is at least one checkbox selected.
+ *
+ * @param {*} validationErrorOccurred if there was an previous validation error
+ * in any other field.
+ * @returns true If there isn't any checkbox selected
+ */
 function validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred) {
   removeErrorAlert($('.activities legend'));
   if ($('.activities input[type="checkbox"]:checked').length === 0) {
@@ -253,7 +261,9 @@ function validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred) {
     );
     if (!validationErrorOccurred)
       $('.activities input[type="checkbox"]:first').focus();
-    validationErrorOccurred = true;
+    return false;
+  } else {
+    return true;
   }
 }
 
@@ -300,8 +310,10 @@ $('form').on('submit', e => {
     validationErrorOccurred = true;
   }
 
-  // If there is no acitivity checkbox selected
-  validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred);
+  // If there is no activity checkbox selected
+  validationErrorOccurred =
+    !validateActivitiesCheckboxesShowOrHideError(validationErrorOccurred) ||
+    validationErrorOccurred;
 
   if (validationErrorOccurred) {
     console.log('COMMENT: validation error occurred!');
