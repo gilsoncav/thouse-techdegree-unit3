@@ -16,10 +16,16 @@ $('#title').on('change', e => {
 
 console.log($('#design'));
 
-// Set initial state of the T-Shirt section
+/**
+ * Set initial state of the T-Shirt section
+ */
 const $selColor = $('#color');
 $('#colors-js-puns').hide();
 $selColor.attr('disabled', 'disabled');
+$selColor
+  .children()
+  .eq(0)
+  .remove();
 $selColor.children().each(function() {
   $(this).attr('disabled', 'disabled');
 });
@@ -317,7 +323,6 @@ function appendErrorAlert($formElement, errorMsg) {
  * before submission.
  */
 $('form').on('submit', e => {
-  e.preventDefault();
   console.log('COMMENT: submission prevented in code!');
 
   let validationErrorOccurred = false;
@@ -349,9 +354,10 @@ $('form').on('submit', e => {
 
   // ? apparently this code is asynchronous line by line. I got weird results with the next if check being executed before the last line was executed and changed the boolean value.
   if (validationErrorOccurred) {
+    e.preventDefault();
     console.log('COMMENT: validation error occurred!');
   } else {
-    alert('Everything ok to submit the form (Mockup Version Message)');
+    console.log('COMMENT: no validation errors... submitting...');
   }
 });
 
